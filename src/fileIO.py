@@ -7,3 +7,10 @@ def readDataFile(fileName):
 			dataFrame.append(row)
 
 	return dataFrame
+
+def writeToFile(fileName, dataFrame):
+	writer = open(fileName, 'w')
+	for line in dataFrame:
+		writer.write(str(line))
+		writer.write('\n')
+	writer.close

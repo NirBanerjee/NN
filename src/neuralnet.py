@@ -1,6 +1,7 @@
 from __future__ import division
-from fileIO import readDataFile
+from fileIO import readDataFile, writeToFile
 from vectorizer import generateVectors
+from utilities import forwardPropagation, backPropagation, getCrossEntropy, predictLabels, getError
 import numpy as np
 import sys
 
@@ -12,8 +13,8 @@ if __name__ == '__main__':
 	#Get all command line arguments
 	trainingFile = sys.argv[1]
 	validationFile = sys.argv[2]
-	trainingLabels = sys.argv[3]
-	validationLabels = sys.argv[4]
+	trainingLabelsFile = sys.argv[3]
+	validationLabelsFile = sys.argv[4]
 	metricsFile = sys.argv[5]
 	numEpochs = int(sys.argv[6])
 	hiddenUnits = int(sys.argv[7])
@@ -39,17 +40,51 @@ if __name__ == '__main__':
 		beta = np.random.uniform(-0.1, 0.1, (10, hiddenUnits))
 
 	#Add Zero Row in Alpha and Beta
-	zeroAlpha = np.zeros([1, len(trainingFeatures[0])])
-	alpha = np.concatenate((zeroAlpha, alpha), axis = 0)
+	zeroAlpha = np.zeros([hiddenUnits, 1])
+	alpha = np.concatenate((zeroAlpha, alpha), axis = 1)
 	zeroBeta = np.zeros([10, 1])
 	beta = np.concatenate((zeroBeta, beta), axis = 1)
 
-	print(np.shape(alpha))
-	print(alpha)
-	print(np.shape(beta))
-	print(beta)
-	# print(trainingFeatures)
-	# print("\n")
-	# print(trainingLabels)
+	metricsWriter = []
+	#Start Neural Network Training
+	for i in range(numEpochs):
+		record = 0
+		for feature in trainingFeatures:
 
+			#Add the bias term
+			feature = np.insert(feature, 0, 1)
+			feature = np.matrix(feature)
 
+			#Forward Propagation
+			yHat, vectorZ = forwardPropagation(feature, alpha, beta)
+			#Backward Propagation
+			gradAlpha, gradBeta = backPropagation(feature, trainingLabels[record], alpha, beta, yHat, vectorZ)
+
+			#Update Alpha and Beta
+			alpha = alpha - eta * gradAlpha
+			beta = beta - eta * gradBeta
+
+			#And Continue
+			record = record + 1
+
+		#Get Cross Entropy for Train Data
+		crossEntropyTrain = getCrossEntropy(trainingFeatures, trainingLabels, alpha, beta)
+		metricsWriter.append("epoch=" + str(i+1) + " cossentropy(train): " + str(crossEntropyTrain))
+		#Get Cross Entropy for Validation Data
+		crossEntropyValidate = getCrossEntropy(validationFeatures, validationLabels, alpha, beta)
+		metricsWriter.append("epoch=" + str(i+1) + " cossentropy(validation): " + str(crossEntropyValidate))
+
+	#Predict Training Labels
+	trainLabelsList = predictLabels(trainingFeatures, alpha, beta)
+	trainError = getError(trainLabelsList, trainingLabels)
+	metricsWriter.append("error(train): " + str(trainError))
+
+	#Predict Validation Labels
+	validationLabelsList = predictLabels(validationFeatures, alpha, beta)
+	validationError = getError(validationLabelsList, validationLabels)
+	metricsWriter.append("error(validation): " + str(validationError))	
+
+	#Write All Data To File
+	writeToFile(trainingLabelsFile, trainLabelsList)
+	writeToFile(validationLabelsFile, validationLabelsList)
+	writeToFile(metricsFile, metricsWriter)

@@ -11,4 +11,4 @@ def generateVectors(dataFrame):
 		labelList.append(elements[0])
 		featureList.append(elements[1:])
 
-	return np.array(featureList), np.matrix(labelList)
+	return np.array(featureList), np.array(labelList)
