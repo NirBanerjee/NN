@@ -76,6 +76,8 @@ if __name__ == '__main__':
 		crossEntropyValidate = getCrossEntropy(validationFeatures, validationLabels, alpha, beta)
 		metricsWriter.append("epoch=" + str(i+1) + " cossentropy(validation): " + str(crossEntropyValidate))
 
+		print("Completed Epoch = " + str(i+1))
+
 	#Predict Training Labels
 	trainLabelsList = predictLabels(trainingFeatures, alpha, beta)
 	trainError = getError(trainLabelsList, trainingLabels)
