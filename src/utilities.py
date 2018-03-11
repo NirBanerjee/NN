@@ -41,41 +41,33 @@ def backPropagation(feature, label, alpha, beta, yHat, vectorZ):
 	return gradAlpha,gradBeta
 
 def getCrossEntropy(featureList, labelList, alpha, beta):
-	sumEntropy = 0
 	record = 0
-	for feature in featureList:
-
-		#Add the bias term
-		feature = np.insert(feature, 0, 1)
-		feature = np.matrix(feature)
-
-		#Forward Propagation
-		yHat, vectorZ = forwardPropagation(feature, alpha, beta)
-
-		#Calculate Entropy
-		labelVal = int(labelList[record])
-		sumEntropy = sumEntropy + math.log(yHat[labelVal][0])
+	sumEntropy = 0
+	#featureListTranspose = featureList.T
+	zMatrix = np.dot(alpha, featureList.T)
+	zMatrix = sigmoid(zMatrix)
+	biasArray = np.matrix(np.ones(len(featureList)))
+	zMatrix = np.concatenate((biasArray, zMatrix), axis = 0)
+	yHatMatrix = softmax(np.dot(beta, zMatrix))
+	yHatMatrix = np.log(yHatMatrix)
+	for column in yHatMatrix.T:
+		columnArray = np.array(column).flatten()
+		sumEntropy = sumEntropy + columnArray[labelList[record]]
 		record = record + 1
-
 	return -sumEntropy/record
 
 def predictLabels(featureList, alpha, beta):
 	predictedLabels = []
-	for feature in featureList:
-
-		#Add the bias term
-		feature = np.insert(feature, 0, 1)
-		feature = np.matrix(feature)
-
-		#Forward Propagation
-		yHat, vectorZ = forwardPropagation(feature, alpha, beta)
-
-		#Get Label
-		yHatArr = yHat.flatten()
-		predictedLabel = np.argmax(yHatArr)
-		predictedLabels.append(predictedLabel)
-
+	#featureListTranspose = featureList.T
+	zMatrix = np.dot(alpha, featureList.T)
+	zMatrix = sigmoid(zMatrix)
+	biasArray = np.matrix(np.ones(len(featureList)))
+	zMatrix = np.concatenate((biasArray, zMatrix), axis = 0)
+	yHatMatrix = softmax(np.dot(beta, zMatrix))
+	for column in yHatMatrix.T:
+		predictedLabels.append(np.argmax(column))
 	return predictedLabels
+
 
 def getError(predictedLabels, actualLabels):
 	errorCount = 0
