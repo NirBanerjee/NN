@@ -1,0 +1,12 @@
+epoch=1 cossentropy(train): 2.301731404589464
+epoch=1 cossentropy(validation): 2.301794809799377
+epoch=2 cossentropy(train): 2.0208574133836623
+epoch=2 cossentropy(validation): 2.01717994002363
+epoch=3 cossentropy(train): 1.867013579955681
+epoch=3 cossentropy(validation): 1.8594322800020802
+epoch=4 cossentropy(train): 1.820474250206049
+epoch=4 cossentropy(validation): 1.8150256077947933
+epoch=5 cossentropy(train): 1.795370786902712
+epoch=5 cossentropy(validation): 1.7941029136249271
+error(train): 0.731
+error(validation): 0.732

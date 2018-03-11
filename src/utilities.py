@@ -5,7 +5,7 @@ def calculateSigmoid(vector):
 	return 1 /(1 + np.exp(-vector))
 
 def softmax(vector):
-	return np.exp(vector) / np.exp(vector).sum()
+	return np.exp(vector)
 
 def forwardPropagation(feature, alpha, beta):
 
@@ -19,6 +19,7 @@ def forwardPropagation(feature, alpha, beta):
 	#Calculate the prediction yHat
 	vectorB = np.dot(beta, vectorZ)
 	yHat = softmax(vectorB)
+	yHat = yHat/sum(yHat)
 	
 	return yHat, vectorZ
 

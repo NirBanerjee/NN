@@ -1,4 +1,3 @@
-from __future__ import division
 from fileIO import readDataFile, writeToFile
 from vectorizer import generateVectors
 from utilities import forwardPropagation, backPropagation, getCrossEntropy, predictLabels, getError
@@ -32,9 +31,12 @@ if __name__ == '__main__':
 	validationFeatures, validationLabels = generateVectors(validationData)
 
 	#Initialize Alpha and Beta Matrices
+	labelsSet = set(trainingLabels)
+	labelsSet = list(labelsSet)
+	labelsSet = sorted(labelsSet)
 	if initFlag != 1:
 		alpha = np.zeros([hiddenUnits, len(trainingFeatures[0])])
-		beta = np.zeros([10, hiddenUnits])
+		beta = np.zeros([len(labelsSet), hiddenUnits])
 	else:
 		alpha = np.random.uniform(-0.1, 0.1, (hiddenUnits, len(trainingFeatures[0])))
 		beta = np.random.uniform(-0.1, 0.1, (10, hiddenUnits))
